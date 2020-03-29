@@ -63,6 +63,23 @@ bool getSafeSeq()
         }
         return true;
 }
+void* processCode(void *arg) 
+{
+        int p = *((int *) arg);
+
+        pthread_mutex_lock(&lock);
+
+        while(p != safe[n])
+                pthread_cond_wait(&c, &lock);
+
+	for(int i=0; i<nR; i++)
+                r[i] += a[p][i];
+
+        n++;
+        pthread_cond_broadcast(&c);
+        pthread_mutex_unlock(&lock);
+	pthread_exit(NULL);
+}
 
 
 
