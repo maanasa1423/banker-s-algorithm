@@ -121,7 +121,48 @@ int main(int argc, char** argv)
                 printf("%-3d", safe[i]+1);
         }
 	printf("\n");
+	printf("\n Allocated: \n");
+        for(int i=0; i<nP; i++){
+		for(int j=0;j<nR;j++)
+                	printf("%3d ", a[i][j]);
+		printf("\n");
+	}
 	
+	for(int i=0; i<nP; i++)
+                for(int j=0; j<nR; j++)
+                        need[i][j] = max[i][j] - a[i][j];	
+
+	printf("\nNeed: \n");
+        for(int i=0; i<nP; i++){
+		for(int j=0;j<nR;j++)
+                	printf("%3d ", need[i][j]);
+		printf("\n");
+	}
+
+        //=========================================================================================================
+        printf("\nExecuting Processes...\n");
+        sleep(1);
+
+	pthread_t processes[nP];
+        pthread_attr_t attr;
+        pthread_attr_init(&attr);
+
+	int processNumber[nP];
+	for(int i=0; i<nP; i++)
+		processNumber[i] = i;
+
+        for(int i=0; i<nP; i++)
+                pthread_create(&processes[i], &attr, processCode, (void *)(&processNumber[i]));
+
+        for(int i=0; i<nP; i++)
+                pthread_join(processes[i], NULL);
+
+	printf("\n Available : ");
+        for(int i=0; i<nR; i++)
+                printf("%3d", r[i]);
+  printf("\nAll processes are successfully finished\n");
+}
+
 
 
 
