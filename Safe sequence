@@ -1,0 +1,68 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <pthread.h>
+#include <stdbool.h>
+#include <time.h>
+
+int nR, nP;
+int r[15];
+int a[15][15];
+int max[15][15];
+int need[15][15];
+int safe[15];
+int n = 0;
+
+pthread_mutex_t lock;
+pthread_cond_t c;
+
+bool getSafeSeq() 
+{
+        int temp[nR];
+        for(int i=0; i<nR; i++) 
+		temp[i] = r[i];
+
+        bool f[nP];
+        for(int i=0; i<nP; i++)
+		f[i] = false;
+        int nf=0;
+        while(nf < nP)
+	{
+                bool s = false;
+
+                for(int i=0; i<nP; i++)
+		{
+                        if(!f[i])
+			{
+                                bool p = true;
+                                for(int j=0; j<nR; j++)
+                                        if(need[i][j] > temp[j])
+					{
+                                                p = false;
+                                                break;
+                                        }
+
+                                if(p) 
+				{
+                                        for(int j=0; j<nR; j++)
+                                                temp[j] += a[i][j];
+                                        safe[nf] = i;
+                                        f[i] = true;
+                                        ++nf;
+                                        s= true;
+                                }
+                        }
+                }
+
+                if(!s) 
+		{
+                        for(int k=0; k<nP; k++) 
+				safe[k] = -1;
+                        return false;
+                }
+        }
+        return true;
+}
+
+
+
